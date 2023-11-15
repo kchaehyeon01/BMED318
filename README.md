@@ -1,2 +1,2 @@
 # BMED318
-23F BMED318 Hands-On
+23F BMED318 Biomedical Image Processing
