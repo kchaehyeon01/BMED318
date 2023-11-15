@@ -75,9 +75,25 @@ subplot(1,3,3); imshow(cfc); title("Filtered image : cross SE");
 %% Application : Region Filling
 clc, clear, close all;
 
-i = ~im2gray(imread('images/nya4.png'));
+i = imresize(~im2gray(imread('images/nya4.png')),[256,256]);
+se = ones(3,3);
+im = imdilate(i,se)&~i;       % get external boundary image
+   
+curr = zeros(size(i))>1; 
+last = zeros(size(im))>1;
+last(100,23)=1;               % datatip을 통해 seed를 수동으로 결정하였음
+curr = imdilate(last,se)&~im;
+while any(curr(:)~=last(:))   % curr과 last가 다른게 하나라도 있다면 loop 수행
+    last = curr;
+    curr = imdilate(last,se)&~im;
+end
 
-
+figure;
+subplot(1,4,1); imshow(i); title("Original binary image");
+subplot(1,4,2); imshow(im); title("External boundary image");
+subplot(1,4,3); imshow(curr); title("Region filling");
+subplot(1,4,4); imshow(im|curr); title("Filled image");
+% 끊어진 object는 개별 seed 필요
 
 %% Application : Connected Components
 
