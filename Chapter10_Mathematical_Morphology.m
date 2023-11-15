@@ -73,6 +73,10 @@ subplot(1,3,3); imshow(cfc); title("Filtered image : cross SE");
 %% Application : Shape Detection - Hit-or-Miss Transform
 
 %% Application : Region Filling
+clc, clear, close all;
+
+i = ~im2gray(imread('images/nya4.png'));
+
 
 
 %% Application : Connected Components
