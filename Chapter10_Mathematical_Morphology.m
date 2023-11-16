@@ -96,7 +96,35 @@ subplot(1,4,4); imshow(im|curr); title("Filled image");
 % 끊어진 object는 개별 seed 필요
 
 %% Application : Connected Components
+clc, clear, close all;
 
+i = imresize(~im2gray(imread("images/nya4.png")),[256,256]);
+se1 = ones(3,3);
+se2 = ones(20,20);
+% SE shape, thickness, size 조정하여 [약하게 연결]된 부분도 하나의 object로 연결될 수 있음
+
+curr1 = ~ones(size(i));
+last1 = ~ones(size(i));
+last1(100,23) = 1;         % datatip을 통해 seed를 수동으로 결정하였음
+curr1 = imdilate(last1,se1)&i;
+while any(curr1(:)~=last1(:))
+    last1 = curr1;
+    curr1 = imdilate(last1,se1)&i;
+end
+
+curr2 = ~ones(size(i));
+last2 = ~ones(size(i));
+last2(100,23) = 1;         % datatip을 통해 seed를 수동으로 결정하였음
+curr2 = imdilate(last2,se2)&i;
+while any(curr2(:)~=last2(:))
+    last2 = curr2;
+    curr2 = imdilate(last2,se2)&i;
+end
+
+figure; 
+subplot(1,3,1); imshow(i); title("Original binary image");
+subplot(1,3,2); imshow(last1); title("Connected components (SE : ones(3,3)");
+subplot(1,3,3); imshow(last2); title("Connected components (SE ; ones(20,20)");
 
 %% Application : Skeletons : Erosion -> Opening
 clc, clear, close all;
