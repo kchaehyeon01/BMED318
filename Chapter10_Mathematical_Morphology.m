@@ -71,6 +71,32 @@ subplot(1,3,3); imshow(cfc); title("Filtered image : cross SE");
 % noise 양, 위치에 따라 SE를 조정함으로써 제거 성능 조정
 
 %% Application : Shape Detection - Hit-or-Miss Transform
+clc, clear, close all;
+
+i = ~ones(256);
+i(10:40,50:80) = true;
+i(100:130, 20:50) = true;
+i(200:230, 90:120) = true;
+i(150:180,200:230) = true;
+i(100:130, 100:130) = true;
+i(50:80, 220:250) = true;
+
+se = ~zeros(32,32);
+se(1,:) = false;
+se(end,:) = false;
+se(:,1) = false;
+se(:,end) = false;
+
+res1 = imerode(i,se);
+res2 = imerode(~i,~se);
+res = res1 & res2;
+disp(sum(sum(res)));
+
+figure;
+subplot(1,4,1); imshow(i); title("Original image");
+subplot(1,4,2); imshow(res1); title("Erosion");
+subplot(1,4,3); imshow(res2); title("Erosion of complements");
+subplot(1,4,4); imshow(res); title("Hit or Miss result")
 
 %% Application : Region Filling
 clc, clear, close all;
