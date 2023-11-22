@@ -1,3 +1,6 @@
+
+% Chapter 10 Mathematical Morphology
+
 %% Dilation : imdialte(input,SE)
 clc, clear, close all;
 
