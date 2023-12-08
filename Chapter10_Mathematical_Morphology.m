@@ -30,10 +30,27 @@ i = imread("circbw.tif");
 se = ones(8,8);
 io = imopen(i,se);
 ic = imclose(i,se);
+
 figure;
 subplot(1,3,1); imshow(i); title("Original image");
 subplot(1,3,2); imshow(io); title("Opening image");
 subplot(1,3,3); imshow(ic); title("Closing image");
+
+%% Closing from Quiz
+clc, clear, close all;
+
+A = [0 0 0 0 0 0; 0 0 0 1 1 0; 0 1 1 1 1 0;
+     0 1 0 1 1 0; 0 1 1 0 0 0; 0 0 0 0 0 0];
+B = [0 1 0; 1 1 1; 0 1 0];
+
+clo = imclose(A,B);
+dne = imerode(imdilate(A,B),B); 
+
+figure; 
+subplot(1,2,1); imshow(clo,[]);
+subplot(1,2,2); imshow(dne,[]);
+% dilation-erosion이 개념상 closing과 동일하지만 결과는 다름 (boundary에도 1 존재)
+% (근데 썩 중요하지는 않음; 큰 이미지를 다루기 때문)
 
 %% Application : Boundary Detection - Dilation & Erosion
 clc, clear, close all;
@@ -73,33 +90,55 @@ subplot(1,3,2); imshow(cfs); title("Filtered image : Squre SE");
 subplot(1,3,3); imshow(cfc); title("Filtered image : cross SE");
 % noise 양, 위치에 따라 SE를 조정함으로써 제거 성능 조정
 
+%% Application : Shape Detection - Hit-or-Miss Transform (exmaple on slide)
+clc, clear, close all;
+
+t = ~ones(100,100);
+t(10,30:35) = true;
+
+b1 = ones(1,6);
+b2 = [1 1 1 1 1 1 1 1; % 개념상은 complement이지만, 한 겹 더 큰 SE를 만들어줘야 함
+      1 0 0 0 0 0 0 1;
+      1 1 1 1 1 1 1 1];
+
+tb1 = imerode(t,b1);
+tb2 = imerode(~t,b2);
+hit_or_miss = tb1&tb2;
+
+figure;
+subplot(1,4,1); imshow(t,[]); title("original image");
+subplot(1,4,2); imshow(tb1,[]); title("erosion");
+subplot(1,4,3); imshow(tb2,[]); title("erosion with complement");
+subplot(1,4,4); imshow(hit_or_miss,[]); title("hit or miss");
+
 %% Application : Shape Detection - Hit-or-Miss Transform
 clc, clear, close all;
 
-i = ~ones(256);
-i(10:40,50:80) = true;
-i(100:130, 20:50) = true;
-i(200:230, 90:120) = true;
-i(150:180,200:230) = true;
-i(100:130, 100:130) = true;
-i(50:80, 220:250) = true;
+i = ~ones(128);
+i(20:22,50:52) = true;   
+i(100:102, 20:22) = true; 
+i(100:102, 90:92) = true; 
+i(50:52, 100:102) = true;
 
-se = ~zeros(32,32);
-se(1,:) = false;
-se(end,:) = false;
-se(:,1) = false;
-se(:,end) = false;
+se = ones(3,3);
+sec = [1 1 1 1 1;
+       1 0 0 0 1;
+       1 0 0 0 1;
+       1 0 0 0 1;
+       1 1 1 1 1];
 
 res1 = imerode(i,se);
-res2 = imerode(~i,~se);
-res = res1 & res2;
-disp(sum(sum(res)));
+res2 = imerode(~i,sec);
+hitormiss = res1 & res2;
+
+disp(sum(sum(hitormiss)));
 
 figure;
-subplot(1,4,1); imshow(i); title("Original image");
-subplot(1,4,2); imshow(res1); title("Erosion");
-subplot(1,4,3); imshow(res2); title("Erosion of complements");
-subplot(1,4,4); imshow(res); title("Hit or Miss result")
+subplot(1,5,1); imshow(i); title("Original image : 3x3 shapes");
+subplot(1,5,2); imshow(~i); title("Complement image");
+subplot(1,5,3); imshow(res1); title("Erosion");
+subplot(1,5,4); imshow(res2); title("Erosion with complements");
+subplot(1,5,5); imshow(hitormiss); title("Hit-Or-Miss");
 
 %% Application : Region Filling
 clc, clear, close all;
@@ -108,9 +147,9 @@ i = imresize(~im2gray(imread('images/nya4.png')),[256,256]);
 se = ones(3,3);
 im = imdilate(i,se)&~i;       % get external boundary image
    
-curr = zeros(size(i))>1; 
-last = zeros(size(im))>1;
-last(100,23)=1;               % datatip을 통해 seed를 수동으로 결정하였음
+curr = ~ones(size(im));
+last = ~ones(size(im));      
+last(100,23)=1;               % initialize seed : datatip을 통해 수동으로 결정
 curr = imdilate(last,se)&~im;
 while any(curr(:)~=last(:))   % curr과 last가 다른게 하나라도 있다면 loop 수행
     last = curr;
