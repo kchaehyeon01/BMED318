@@ -1,5 +1,5 @@
 # KU23F BMED318 : Biomedical Image Processing
-
+* [LECTURE-NOTES](https://hollydooda.notion.site/BMED318-Biomedical-Image-Processing-8408d0dbf01e4c76a29b53e257501916?pvs=4)
 * Chapter 0 [note](https://hollydooda.notion.site/BMED318-Chapter-0-MATLAB-3f6d25cef8544b31aa43fbb40e81336d?pvs=4) : MATLAB
 * Chapter 1 [note](https://hollydooda.notion.site/BMED318-Chapter-1-Introduction-9609e95c1b694c8db79fbb43eaab4343?pvs=4) : Introduction 
 * Chapter 2 [note](https://hollydooda.notion.site/BMED318-Chapter-2-Image-Files-and-File-Types-c05e06784da240948095c8e688b4954f?pvs=4) : Image Files and File Types 
